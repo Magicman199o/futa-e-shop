@@ -67,7 +67,7 @@ const ShoppingCart = ({ thumb, name, id, color, size, count, price }: ProductSto
           </button>
         </div>
       </td>
-      <td>${price}</td>
+      <td>N{price}</td>
       <td className="cart-item-cancel"><i className="icon-cancel" onClick={() => removeFromCart()}></i></td>
     </tr>
   )

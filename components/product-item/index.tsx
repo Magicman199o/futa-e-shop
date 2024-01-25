@@ -40,7 +40,7 @@ const ProductItem = ({ discount, images, id, name, price, currentPrice }: Produc
           <h4>N{ currentPrice }</h4>
 
           {discount &&  
-            <span>${ price }</span>
+            <span>N{ price }</span>
           }
         </div>
       </div>

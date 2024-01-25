@@ -11,23 +11,20 @@ const IndexPage = () => {
 
       <section className="featured">
         <div className="container">
-          <article style={{backgroundImage: 'url(/images/featured-1.jpg)'}} className="featured-item featured-item-large">
+          <article style={{backgroundImage: 'url(/images/products/product-1.jpg)'}} className="featured-item featured-item-large">
             <div className="featured-item__content">
-              <h3>New arrivals are now in!</h3>
-              <a href="#" className="btn btn--rounded">Show Collection</a>
+              <a href="#" className="btn btn--rounded">Show More Books</a>
             </div>
           </article>
           
-          <article style={{backgroundImage: 'url(/images/featured-2.jpg)'}} className="featured-item featured-item-small-first">
+          <article style={{backgroundImage: 'url(/images/products/product-2.jpg)'}} className="featured-item featured-item-small-first">
             <div className="featured-item__content">
-              <h3>Basic t-shirts $29,99</h3>
               <a href="#" className="btn btn--rounded">More details</a>
             </div>
           </article>
           
-          <article style={{backgroundImage: 'url(/images/featured-3.jpg)'}} className="featured-item featured-item-small">
+          <article style={{backgroundImage: 'url(/images/products/product-3.jpg)'}} className="featured-item featured-item-small">
             <div className="featured-item__content">
-              <h3>Sale this summer</h3>
               <a href="#" className="btn btn--rounded">VIEW ALL</a>
             </div>
           </article>
@@ -41,13 +38,7 @@ const IndexPage = () => {
           </header>
 
           <ul className="shop-data-items">
-            <li>
-              <i className="icon-shipping"></i>
-              <div className="data-item__content">
-                <h4>Free Shipping</h4>
-                <p>All purchases over $199 are eligible for free shipping via USPS First Class Mail.</p>
-              </div>
-            </li>
+            
             
             <li>
               <i className="icon-payment"></i>

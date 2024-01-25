@@ -7,8 +7,7 @@ const Footer = () => {
         <div className="site-footer__top">
           <div className="site-footer__description">
             <h6><Logo /> <span>E</span>-Shop</h6>
-            <p>House My Brand designs clothing for the young, the old & everyone in between – but most 
-              importantly, for the fashionable</p>
+            
             <ul className="site-footer__social-networks">
               <li><a href="#"><i className="icon-facebook"></i></a></li>
               <li><a href="#"><i className="icon-twitter"></i></a></li>
@@ -29,10 +28,9 @@ const Footer = () => {
             </ul>
             <ul>
               <li>Information</li>
-              <li><a href="#">Gift Cards</a></li>
               <li><a href="#">Find a store</a></li>
               <li><a href="#">Newsletter</a></li>
-              <li><a href="#">Bacome a member</a></li>
+              <li><a href="#">Become a member</a></li>
               <li><a href="#">Site feedback</a></li>
             </ul>
             <ul>

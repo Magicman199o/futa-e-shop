@@ -1,7 +1,7 @@
 export const products = [
   {
     id: '1',
-    name: 'T-Shirt Summer Vibes',
+    name: 'Experimental Mathematics in Action',
     price: 119.99,
     discount: 30,
     quantityAvailable: 2,
@@ -61,7 +61,7 @@ export const products = [
   },
   {
     id: '2',
-    name: 'T-Shirt Summer Vibes',
+    name: 'Set of Back Packs',
     price: 119.99,
     quantityAvailable: 2,
     category: 'T-shirt',
@@ -120,7 +120,7 @@ export const products = [
   },
   {
     id: '3',
-    name: 'T-Shirt Summer Vibes',
+    name: '10 in 1 notebook',
     price: 119.99,
     quantityAvailable: 2,
     category: 'T-shirt',
@@ -179,7 +179,7 @@ export const products = [
   },
   {
     id: '4',
-    name: 'T-Shirt Summer Vibes',
+    name: 'University Physics',
     price: 119.99,
     quantityAvailable: 2,
     category: 'T-shirt',
@@ -238,7 +238,7 @@ export const products = [
   },
   {
     id: '5',
-    name: 'T-Shirt Summer Vibes',
+    name: 'Nigeria Notebook',
     price: 119.99,
     quantityAvailable: 2,
     category: 'T-shirt',
@@ -297,7 +297,7 @@ export const products = [
   },
   {
     id: '6',
-    name: 'T-Shirt Summer Vibes',
+    name: 'Casio Calculator',
     price: 119.99,
     discount: 30,
     quantityAvailable: 2,

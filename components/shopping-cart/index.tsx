@@ -62,7 +62,7 @@ const ShoppingCart = () => {
           <input type="text" placeholder="Promo Code" className="cart__promo-code" />
 
           <div className="cart-actions__items-wrapper">
-            <p className="cart-actions__total">Total cost <strong>${priceTotal().toFixed(2)}</strong></p>
+            <p className="cart-actions__total">Total cost <strong>N{priceTotal().toFixed(2)}</strong></p>
             <a href="/cart/checkout" className="btn btn--rounded btn--yellow">Checkout</a>
           </div>
         </div>
