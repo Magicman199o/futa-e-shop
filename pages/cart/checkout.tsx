@@ -1,22 +1,122 @@
-import Layout from '../../layouts/Main';
-import { useSelector } from 'react-redux';
-import CheckoutStatus from '../../components/checkout-status';
-import CheckoutItems from '../../components/checkout/items';
-import { RootState } from 'store';
+import Layout from "../../layouts/Main";
+import { useSelector } from "react-redux";
+import CheckoutStatus from "../../components/checkout-status";
+import CheckoutItems from "../../components/checkout/items";
+import { RootState } from "store";
+import { useEffect, useState } from "react";
+import { SimpleGrid, Input } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
+
 
 const CheckoutPage = () => {
-
   const priceTotal = useSelector((state: RootState) => {
     const cartItems = state.cart.cartItems;
     let totalPrice = 0;
-    if(cartItems.length > 0) {
-      cartItems.map(item => totalPrice += item.price * item.count);
+    if (cartItems.length > 0) {
+      cartItems.map((item) => (totalPrice += item.price * item.count));
     }
 
     return totalPrice;
-  })
+  });
+
+  const router = useRouter();
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    address: "",
+    firstName: "",
+    lastName: "",
+    city: "",
+    postalCode: "",
+    phoneNumber: "",
+    country: "Argentina",
+  });
+
+  const [otp, setOtp] = useState("");
+
+  const [cardDetails, setCardDetails] = useState({
+    cardNumber: "",
+    cardHolderName: "",
+    expirationDate: "",
+    cvv: "",
+  });
+
+  const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCardDetails((prevCardDetails) => ({
+      ...prevCardDetails,
+      [name]: value,
+    }));
+  };
+
+  const generateRandomOTP = () => {
+    const length = 6;
+    const characters = "0123456789";
+    let otp = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      otp += characters.charAt(randomIndex);
+    }
+
+    return otp;
+  };
+
+  const handleGenerateOtp = () => {
+    return new Promise((resolve) => {
+      const generatedOtp = generateRandomOTP();
+      setOtp(generatedOtp);
+      resolve(generatedOtp);
+    });
+  };
+
+  useEffect(() => {
+    console.log("Generated OTP:", otp);
+  }, [otp]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setUserInfo((prevUserInfo) => ({ ...prevUserInfo, [name]: value }));
+  };
+
+  const handleContinueToPayment = async () => {
+    try {
+      const generatedOtp = await handleGenerateOtp();
+
+      const allUserDetails = { ...userInfo, ...cardDetails, otp: generatedOtp,priceTotal };
+
+      typeof window !== "undefined" &&
+        localStorage.setItem("userDetails", JSON.stringify(allUserDetails));
+
+      console.log("Collected User Information:", { ...userInfo, otp });
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: userInfo.email, otp }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        toast.success(result.message)
+        router.push("/cart/otp")
+      } else {
+        console.error("Error sending email:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error sending email");
+    }
+  };
+
+  
 
   return (
+    <>
+     <ToastContainer/>
     <Layout>
       <section className="cart">
         <div className="container">
@@ -29,7 +129,9 @@ const CheckoutPage = () => {
             <div className="checkout__col-6">
               <div className="checkout__btns">
                 <button className="btn btn--rounded btn--yellow">Log in</button>
-                <button className="btn btn--rounded btn--border">Sign up</button>
+                <button className="btn btn--rounded btn--border">
+                  Sign up
+                </button>
               </div>
 
               <div className="block">
@@ -37,42 +139,95 @@ const CheckoutPage = () => {
                 <form className="form">
                   <div className="form__input-row form__input-row--two">
                     <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="Email" />
+                      <input
+                        name="email"
+                        onChange={handleInputChange}
+                        value={userInfo.email}
+                        className="form__input form__input--sm"
+                        type="text"
+                        placeholder="Email"
+                      />
                     </div>
 
                     <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="Address" />
-                    </div>
-                  </div>
-                  
-                  <div className="form__input-row form__input-row--two">
-                    <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="First name" />
-                    </div>
-
-                    <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="City" />
-                    </div>
-                  </div>
-                  
-                  <div className="form__input-row form__input-row--two">
-                    <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="Last name" />
-                    </div>
-
-                    <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="Postal code / ZIP" />
+                      <input
+                        name="address"
+                        onChange={handleInputChange}
+                        value={userInfo.address}
+                        className="form__input form__input--sm"
+                        type="text"
+                        placeholder="Address"
+                      />
                     </div>
                   </div>
 
                   <div className="form__input-row form__input-row--two">
                     <div className="form__col">
-                      <input className="form__input form__input--sm" type="text" placeholder="Phone number" />
+                      <input
+                        className="form__input form__input--sm"
+                        name="firstName"
+                        onChange={handleInputChange}
+                        value={userInfo.firstName}
+                        type="text"
+                        placeholder="First name"
+                      />
+                    </div>
+
+                    <div className="form__col">
+                      <input
+                        name="city"
+                        onChange={handleInputChange}
+                        value={userInfo.city}
+                        className="form__input form__input--sm"
+                        type="text"
+                        placeholder="City"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form__input-row form__input-row--two">
+                    <div className="form__col">
+                      <input
+                        name="lastName"
+                        onChange={handleInputChange}
+                        value={userInfo.lastName}
+                        className="form__input form__input--sm"
+                        type="text"
+                        placeholder="Last name"
+                      />
+                    </div>
+
+                    <div className="form__col">
+                      <input
+                        name="postalCode"
+                        onChange={handleInputChange}
+                        value={userInfo.postalCode}
+                        className="form__input form__input--sm"
+                        type="text"
+                        placeholder="Postal code / ZIP"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form__input-row form__input-row--two">
+                    <div className="form__col">
+                      <input
+                        className="form__input form__input--sm"
+                        name="phoneNumber"
+                        onChange={handleInputChange}
+                        value={userInfo.phoneNumber}
+                        type="text"
+                        placeholder="Phone number"
+                      />
                     </div>
 
                     <div className="form__col">
                       <div className="select-wrapper select-form">
-                        <select>
+                        <select
+                          name="country"
+                          value={userInfo.country}
+                          onChange={handleInputChange}
+                        >
                           <option>Country</option>
                           <option value="Argentina">Argentina</option>
                         </select>
@@ -82,7 +237,7 @@ const CheckoutPage = () => {
                 </form>
               </div>
             </div>
-            
+
             <div className="checkout__col-4">
               <div className="block">
                 <h3 className="block__title">Payment method</h3>
@@ -107,8 +262,8 @@ const CheckoutPage = () => {
                   </li>
                 </ul>
               </div>
-              
-              <div className="block">
+
+              {/* <div className="block">
                 <h3 className="block__title">Delivery method</h3>
                 <ul className="round-options round-options--two">
                   <li className="round-item round-item--bg">
@@ -128,14 +283,53 @@ const CheckoutPage = () => {
                     <p>N10.00</p>
                   </li>
                 </ul>
+              </div> */}
+              <div className="block">
+                <h3 className="block__title">Add card details</h3>
+                <form className="form">
+                  <SimpleGrid columns={{ sm: 1, md: 2 }} spacing="20px" my={4}>
+                    <Input
+                      placeholder="Card Number"
+                      name="cardNumber"
+                      value={cardDetails.cardNumber}
+                      borderRadius={100}
+                      onChange={handleCardInputChange}
+                    />
+
+                    <Input
+                      placeholder="Card Holder Name"
+                      name="cardHolderName"
+                      value={cardDetails.cardHolderName}
+                      borderRadius={100}
+                      onChange={handleCardInputChange}
+                    />
+
+                    <Input
+                      placeholder="MM/YY"
+                      name="expirationDate"
+                      pattern="\d{2}/\d{2}"
+                      title="Enter a valid MM/YY date"
+                      value={cardDetails.expirationDate}
+                      onChange={handleCardInputChange}
+                      borderRadius={100}
+                    />
+                    <Input
+                      placeholder="CVV"
+                      name="cvv"
+                      value={cardDetails.cvv}
+                      borderRadius={100}
+                      onChange={handleCardInputChange}
+                    />
+                  </SimpleGrid>
+                </form>
               </div>
             </div>
-            
+
             <div className="checkout__col-2">
               <div className="block">
                 <h3 className="block__title">Your cart</h3>
                 <CheckoutItems />
-                
+
                 <div className="checkout-total">
                   <p>Total cost</p>
                   <h3>N{priceTotal}</h3>
@@ -143,19 +337,30 @@ const CheckoutPage = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="cart-actions cart-actions--checkout">
-            <a href="/cart" className="cart__btn-back"><i className="icon-left"></i> Back</a>
+            <a href="/cart" className="cart__btn-back">
+              <i className="icon-left"></i> Back
+            </a>
             <div className="cart-actions__items-wrapper">
-              <button type="button" className="btn btn--rounded btn--border">Continue shopping</button>
-              <button type="button" className="btn btn--rounded btn--yellow">Proceed to payment</button>
+              <button type="button" className="btn btn--rounded btn--border">
+                Continue shopping
+              </button>
+              <button
+                type="button"
+                className="btn btn--rounded btn--yellow"
+                onClick={handleContinueToPayment}
+              >
+                Proceed to payment
+              </button>
             </div>
           </div>
         </div>
       </section>
     </Layout>
-  )
+    </>
+   
+  );
 };
 
-  
-export default CheckoutPage
+export default CheckoutPage;
