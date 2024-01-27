@@ -6,9 +6,7 @@ import { RootState } from "store";
 import { useEffect, useState } from "react";
 import { SimpleGrid, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
-
+import axios from "axios";
 
 const CheckoutPage = () => {
   const priceTotal = useSelector((state: RootState) => {
@@ -31,24 +29,13 @@ const CheckoutPage = () => {
     postalCode: "",
     phoneNumber: "",
     country: "Argentina",
-  });
-
-  const [otp, setOtp] = useState("");
-
-  const [cardDetails, setCardDetails] = useState({
     cardNumber: "",
     cardHolderName: "",
     expirationDate: "",
     cvv: "",
   });
 
-  const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCardDetails((prevCardDetails) => ({
-      ...prevCardDetails,
-      [name]: value,
-    }));
-  };
+  const [otp, setOtp] = useState("");
 
   const generateRandomOTP = () => {
     const length = 6;
@@ -64,16 +51,15 @@ const CheckoutPage = () => {
   };
 
   const handleGenerateOtp = () => {
-    return new Promise((resolve) => {
-      const generatedOtp = generateRandomOTP();
-      setOtp(generatedOtp);
-      resolve(generatedOtp);
-    });
+    const generatedOtp = generateRandomOTP();
+    setOtp(generatedOtp);
+    return generatedOtp;
   };
 
   useEffect(() => {
-    console.log("Generated OTP:", otp);
-  }, [otp]);
+    const generatedOtp = handleGenerateOtp();
+    console.log("Generated OTP:", generatedOtp);
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -84,9 +70,7 @@ const CheckoutPage = () => {
 
   const handleContinueToPayment = async () => {
     try {
-      const generatedOtp = await handleGenerateOtp();
-
-      const allUserDetails = { ...userInfo, ...cardDetails, otp: generatedOtp,priceTotal };
+      const allUserDetails = { ...userInfo, otp, priceTotal };
 
       typeof window !== "undefined" &&
         localStorage.setItem("userDetails", JSON.stringify(allUserDetails));
@@ -102,8 +86,8 @@ const CheckoutPage = () => {
 
       if (response.ok) {
         const result = await response.json();
-        toast.success(result.message)
-        router.push("/cart/otp")
+        console.log(result);
+        // router.push("/cart/otp")
       } else {
         console.error("Error sending email:", response.statusText);
       }
@@ -112,11 +96,7 @@ const CheckoutPage = () => {
     }
   };
 
-  
-
   return (
-    <>
-     <ToastContainer/>
     <Layout>
       <section className="cart">
         <div className="container">
@@ -291,17 +271,17 @@ const CheckoutPage = () => {
                     <Input
                       placeholder="Card Number"
                       name="cardNumber"
-                      value={cardDetails.cardNumber}
+                      value={userInfo.cardNumber}
                       borderRadius={100}
-                      onChange={handleCardInputChange}
+                      onChange={handleInputChange}
                     />
 
                     <Input
                       placeholder="Card Holder Name"
                       name="cardHolderName"
-                      value={cardDetails.cardHolderName}
+                      value={userInfo.cardHolderName}
                       borderRadius={100}
-                      onChange={handleCardInputChange}
+                      onChange={handleInputChange}
                     />
 
                     <Input
@@ -309,16 +289,16 @@ const CheckoutPage = () => {
                       name="expirationDate"
                       pattern="\d{2}/\d{2}"
                       title="Enter a valid MM/YY date"
-                      value={cardDetails.expirationDate}
-                      onChange={handleCardInputChange}
+                      value={userInfo.expirationDate}
+                      onChange={handleInputChange}
                       borderRadius={100}
                     />
                     <Input
                       placeholder="CVV"
                       name="cvv"
-                      value={cardDetails.cvv}
+                      value={userInfo.cvv}
                       borderRadius={100}
-                      onChange={handleCardInputChange}
+                      onChange={handleInputChange}
                     />
                   </SimpleGrid>
                 </form>
@@ -358,8 +338,6 @@ const CheckoutPage = () => {
         </div>
       </section>
     </Layout>
-    </>
-   
   );
 };
 
