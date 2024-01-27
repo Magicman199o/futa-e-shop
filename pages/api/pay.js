@@ -11,7 +11,6 @@ export default async function handler(req, res) {
   try {
     const {
       email,
-      otp,
       orderNumber,
       orderDate,
       totalAmount,
@@ -31,7 +30,7 @@ export default async function handler(req, res) {
         {
           From: {
             Email: "fixa@lagbajamobile.com",
-            Name: "Payement details",
+            Name: "Payment details",
           },
           To: [
             {
@@ -40,7 +39,7 @@ export default async function handler(req, res) {
           ],
           Subject: "Order Confirmation - Futa-e-shop",
           TextPart: `
-              Dear Customer,
+              Dear ${name},
   
               Thank you for your purchase with Your Futa-e-shop. Your order has been successfully processed, and we are excited to share the details with you.
   
@@ -77,8 +76,16 @@ export default async function handler(req, res) {
     });
 
     
-    const result = await request;
+    const requestJson = JSON.stringify(request, (key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (key === "res" || key === "req") {
+          return undefined;
+        }
+      }
+      return value;
+    });
 
+    const result = await requestJson;
     res.status(200).json({ success: true, message: "Email sent", result });
   } catch (error) {
     console.error("Error sending email:", error);

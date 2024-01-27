@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { SimpleGrid, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const CheckoutPage = () => {
   const priceTotal = useSelector((state: RootState) => {
@@ -87,7 +88,8 @@ const CheckoutPage = () => {
       if (response.ok) {
         const result = await response.json();
         console.log(result);
-        // router.push("/cart/otp")
+        toast.success(result.message)
+        router.push("/cart/otp")
       } else {
         console.error("Error sending email:", response.statusText);
       }
