@@ -20,6 +20,8 @@ type ProductPageType = {
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const pid = query.pid;
+  console.log(pid);
+  
   const res = await fetch(`${server}/api/product/${pid}`);
   const product = await res.json();
 
