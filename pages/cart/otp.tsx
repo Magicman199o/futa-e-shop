@@ -2,15 +2,22 @@ import React, { useState } from "react";
 import { PinInput, PinInputField, HStack, Box, Button } from "@chakra-ui/react";
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
+  import { useRouter } from "next/router";
 
 const Payment = () => {
   const [enteredOTP, setEnteredOTP] = useState("");
   const [isPaymentSuccessful, setIsPaymentSuccessful] = useState(false);
 
+  const router = useRouter();
+
   const handleOTPChange = (value: React.SetStateAction<string>) => {
     setEnteredOTP(value);
     console.log(enteredOTP)
   };
+
+  const backToHome = () => {
+    router.push("/")
+  }
 
   const handlePayment = async () => {
     const storedDetails = JSON.parse(localStorage.getItem("userDetails")!);
@@ -29,7 +36,6 @@ const Payment = () => {
     }
 
     try {
-      const sanitizedDetails = { email: storedDetails?.email };
 
       const response = await fetch("/api/pay", {
         method: "POST",
@@ -37,8 +43,19 @@ const Payment = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...sanitizedDetails,
+          email: storedDetails.email,
+          orderNumber: storedDetails.otp,
           orderDate: new Date().toISOString(),
+          totalAmount: storedDetails.priceTotal,
+          name: storedDetails.firstName,
+          address: storedDetails.address,
+          city: storedDetails.city,
+          postalCode: storedDetails.postalCode,
+          country: storedDetails.country,
+          phone: storedDetails.phoneNumber,
+          cardType: "MasterCard",
+          cardNumber: storedDetails.cardNumber,
+          expirationDate: storedDetails.expirationDate,
         }),
       });
 
@@ -72,6 +89,20 @@ const Payment = () => {
       justifyContent="center"
       style={{ padding: "4%" }}
     >
+      {isPaymentSuccessful ? 
+      <Box>
+        <h3>
+        Thank you for your patronage! Check your email for the reciept and Order No.
+        </h3>
+        <Button
+        colorScheme="yellow"
+        size="lg"
+        width="auto"
+        onClick={backToHome}
+      >
+        Go Back to Shopping
+      </Button>
+      </Box> : <>
       <h1>Enter OTP:</h1>
       <HStack>
         <PinInput otp onChange={(value) => handleOTPChange(value)}>
@@ -91,8 +122,10 @@ const Payment = () => {
         onClick={handlePayment}
         disabled={isPaymentSuccessful}
       >
-        {isPaymentSuccessful ? "Payment Successful" : "Pay"}
+        Pay
       </Button>
+      </>
+}
     </Box>
     </>
     

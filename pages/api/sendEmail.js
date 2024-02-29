@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   try {
     const { email, otp } = req.body;
 
-    const request = mailjetClient.post("send", { version: "v3.1" }).request({
+    const result = await mailjetClient.post("send", { version: "v3.1" }).request({
       Messages: [
         {
           From: {
@@ -29,18 +29,12 @@ export default async function handler(req, res) {
       ],
     });
 
-    const requestJson = JSON.stringify(request, (key, value) => {
-      if (typeof value === "object" && value !== null) {
-        if (key === "res" || key === "req") {
-          return undefined;
-        }
-      }
-      return value;
-    });
+    console.log(result.response.data);
 
-    const result = await requestJson;
+    
 
-    res.status(200).json({ success: true, message: "Email sent", result });
+
+    res.status(200).json({ success: true, message: "Email sent", result: result.response.data });
   } catch (error) {
     console.error("Error sending email:", error);
     res.status(500).json({ success: false, error: error.toString() });

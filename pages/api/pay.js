@@ -25,6 +25,22 @@ export default async function handler(req, res) {
       expirationDate,
     } = req.body;
 
+    console.log({
+      email,
+      orderNumber,
+      orderDate,
+      totalAmount,
+      name,
+      address,
+      city,
+      postalCode,
+      country,
+      phone,
+      cardType,
+      cardNumber,
+      expirationDate,
+    });
+
     const request = mailjetClient.post("send", { version: "v3.1" }).request({
       Messages: [
         {

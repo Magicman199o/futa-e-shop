@@ -6,7 +6,6 @@ import { RootState } from "store";
 import { useEffect, useState } from "react";
 import { SimpleGrid, Input } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { toast } from "react-toastify";
 
 const CheckoutPage = () => {
@@ -29,7 +28,7 @@ const CheckoutPage = () => {
     city: "",
     postalCode: "",
     phoneNumber: "",
-    country: "Argentina",
+    country: "Nigeria",
     cardNumber: "",
     cardHolderName: "",
     expirationDate: "",
@@ -73,8 +72,7 @@ const CheckoutPage = () => {
     try {
       const allUserDetails = { ...userInfo, otp, priceTotal };
 
-      typeof window !== "undefined" &&
-        localStorage.setItem("userDetails", JSON.stringify(allUserDetails));
+      localStorage.setItem("userDetails", JSON.stringify(allUserDetails));
 
       console.log("Collected User Information:", { ...userInfo, otp });
       const response = await fetch("/api/sendEmail", {
@@ -109,12 +107,7 @@ const CheckoutPage = () => {
 
           <div className="checkout-content">
             <div className="checkout__col-6">
-              <div className="checkout__btns">
-                <button className="btn btn--rounded btn--yellow">Log in</button>
-                <button className="btn btn--rounded btn--border">
-                  Sign up
-                </button>
-              </div>
+              
 
               <div className="block">
                 <h3 className="block__title">Shipping information</h3>
@@ -211,7 +204,7 @@ const CheckoutPage = () => {
                           onChange={handleInputChange}
                         >
                           <option>Country</option>
-                          <option value="Argentina">Argentina</option>
+                          <option value="Nigeria">Nigeria</option>
                         </select>
                       </div>
                     </div>
